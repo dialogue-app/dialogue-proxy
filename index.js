@@ -5,6 +5,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.get('/test', (req, res) => {
+  res.json({ 
+    status: 'proxy running',
+    hasKey: !!process.env.ANTHROPIC_API_KEY,
+    keyStart: process.env.ANTHROPIC_API_KEY ? process.env.ANTHROPIC_API_KEY.substring(0,10) : 'none'
+  });
+});
+
 app.post('/v1/messages', async (req, res) => {
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -12,8 +20,7 @@ app.post('/v1/messages', async (req, res) => {
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-beta': 'messages-2023-12-15'
+        'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify(req.body)
     });
